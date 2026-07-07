@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel de Control XP - Gestión Avanzada de Posiciones</title>
+    <style>
+        body { background: #5a7edc; font-family: Tahoma, sans-serif; margin: 20px; padding-bottom: 60px; }
+        .window { background: #ece9d8; border: 3px solid #0054e3; border-radius: 4px 4px 0 0; box-shadow: 4px 4px 10px rgba(0,0,0,0.3); margin-bottom: 20px; }
+        .titlebar { background: linear-gradient(to bottom, #0058e6 0%, #026afe 8%, #036ffc 14%, #0260ef 35%, #004ae1 72%, #0040d0 100%); color: white; padding: 4px 8px; font-weight: bold; font-size: 13px; }
+        .xp-btn { background: linear-gradient(to bottom, #fff 0%, #ece9d8 100%); border: 1px solid #707070; padding: 5px 14px; cursor: pointer; font-size: 12px; font-weight: bold; box-sizing: border-box; }
+        .xp-btn:active { background: #e2e2d2; }
+        .xp-btn:disabled { color: #888; cursor: not-allowed; }
+        .primary-btn { background: linear-gradient(to bottom, #b4e05b 0%, #7db72b 100%); color: #fff; border-color: #538312; }
+        .cloud-btn { background: linear-gradient(to bottom, #29b6f6 0%, #0288d1 100%); color: white; border-color: #01579b; }
+        .danger-btn { background: linear-gradient(to bottom, #ff8a80 0%, #d50000 100%); color: white; border-color: #b71c1c; padding: 2px 6px; font-size: 11px; }
+        .move-btn { padding: 2px 5px; font-size: 11px; min-width: 24px; }
+        textarea, input { border: 2px inset #fff; padding: 5px; font-size: 12px; background: #fff; width: 98%; margin-bottom: 10px; box-sizing: border-box; }
+        .config-sec { background: #dfdac2; padding: 10px; border: 1px dashed #707070; margin-bottom: 15px; }
+        
+        .preview-area { background: #ffffff; border: 2px inset #d4d0c8; padding: 12px; margin-top: 10px; }
+        .art-card { border: 2px solid #ff9900; background: #fffdf0; padding: 8px; display: flex; flex-direction: column; width: 180px; margin: 0 auto; position: relative; }
+        .art-card-img-container { width: 100%; height: 120px; background: #ffffff; border: 2px inset #d4d0c8; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 6px; }
+        .art-card img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .art-card h3 { font-size: 12px; font-weight: bold; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        .management-container { background: white; border: 2px inset #d4d0c8; padding: 10px; max-height: 400px; overflow-y: auto; }
+        .manage-row { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e0e0e0; padding: 6px 0; gap: 10px; }
+        .manage-row:hover { background: #f5f5f5; }
+        .item-info { display: flex; align-items: center; gap: 10px; flex-grow: 1; min-width: 0; }
+        .item-info img { width: 45px; height: 45px; object-fit: contain; border: 1px solid #ccc; background: #fff; flex-shrink: 0; }
+        .item-text { min-width: 0; text-align: left; }
+        .item-text strong { display: block; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #000; }
+        .item-text span { font-size: 10px; color: #666; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .action-cluster { display: flex; gap: 4px; align-items: center; flex-shrink: 0; }
+
+        #diagnosticBox {
+            background: #f0f0f0;
+            border: 1px solid #ccc;
+            padding: 8px;
+            font-family: monospace;
+            font-size: 11px;
+            max-height: 150px;
+            overflow-y: auto;
+            margin-top: 8px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        body.dark #diagnosticBox {
+            background: #2d3748;
+            color: #e2e8f0;
+            border-color: #475569;
+        }
+    </style>
+</head>
+<body>
+
+<div class="window" style="width: 650px; margin: 0 auto;">
+    <div class="titlebar"><span>🚀 Panel de Control XP - Añadir Nueva Ilustración (Soporte Emojis UTF-8)</span></div>
+    <div style="padding: 15px;">
+        
+        <div class="config-sec">
+            <strong style="font-size: 11px; display:block; margin-bottom: 5px;">🔧 Credenciales de Acceso Cloud (GitHub):</strong>
+            <input type="password" id="ghToken" placeholder="Pegar tu GitHub Personal Access Token (classic)">
+            <input type="text" id="ghRepoUrl" placeholder="Enlace del repositorio (ej: https://github.com/TralkRymohr/NeowTralk)">
+            <div style="display:flex; gap:10px;">
+                <input type="text" id="ghPath" value="artworks.json" style="flex:2;">
+                <button id="btnLoadRemote" class="xp-btn" style="flex:1; margin-bottom:10px;">🔄 Sincronizar Lista</button>
+            </div>
+        </div>
+
+        <label style="font-size: 11px; font-weight: bold; display: block;">1. Enlace directo de la publicación en Fur Affinity:</label>
+        <input type="text" id="faLinkInput" placeholder="https://www.furaffinity.net/view/12345678/">
+
+        <label style="font-size: 11px; font-weight: bold; display: block;">2. Pegar código fuente HTML de Fur Affinity (Completo):</label>
+        <textarea id="faSourceCode" placeholder="Pega el código HTML extraído con Ctrl+U..." style="height: 70px; font-family: monospace; resize: vertical;"></textarea>
+
+        <div style="display: flex; gap: 10px; margin-top: 5px; margin-bottom: 12px;">
+            <button id="btnPreview" class="xp-btn primary-btn" style="flex: 1;">👁️ Generar Previsualización e Insertar Arriba</button>
+            <button id="btnUpload" class="xp-btn cloud-btn" style="flex: 1;" disabled>✨ Subir Cambios Guardados a GitHub</button>
+        </div>
+
+        <div id="statusMsg" style="font-size: 12px; font-weight: bold; margin-bottom: 10px; color: black;"></div>
+
+        <div id="diagnosticBox" style="display:none;"></div>
+
+        <label style="font-size: 11px; font-weight: bold; display: block;">3. Vista previa del elemento procesado:</label>
+        <div class="preview-area" id="previewArea">
+            <p style="color: #707070; font-size: 11px; text-align: center; margin: 10px 0;">Presiona "Generar Previsualización" para validar.</p>
+        </div>
+    </div>
+</div>
+
+<div class="window" style="width: 650px; margin: 20px auto 0 auto;">
+    <div class="titlebar" style="display:flex; justify-content:space-between; align-items:center;">
+        <span>🗂️ Gestor de Posiciones y Ordenación de la Galería</span>
+        <button id="btnSortChronological" class="xp-btn" style="font-size:11px; padding:2px 8px; color: #0a246a;">📅 Ordenar por Fecha Auto (ID)</button>
+    </div>
+    <div style="padding: 15px;">
+        <p style="font-size: 11px; margin: 0 0 10px 0; color: #333;">Usa las flechas <b>▲</b> y <b>▼</b> para mover el orden, o dale al botón de fecha para ordenar por ID. Al terminar, presiona el botón azul de arriba para guardar en GitHub.</p>
+        <div class="management-container" id="managementGrid">
+            <p style="color: #707070; font-size: 11px; text-align: center; margin: 20px 0;">Carga tus datos arriba para desplegar el organizador secuencial.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+let tempArtObject = null;
+let remoteList = [];
+let remoteSha = "";
+
+document.addEventListener('DOMContentLoaded', () => {
+    if(localStorage.getItem('gh_token')) document.getElementById('ghToken').value = localStorage.getItem('gh_token');
+    if(localStorage.getItem('gh_repo_url')) document.getElementById('ghRepoUrl').value = localStorage.getItem('gh_repo_url');
+    if(localStorage.getItem('gh_path')) document.getElementById('ghPath').value = localStorage.getItem('gh_path');
+    if(document.getElementById('ghToken').value && document.getElementById('ghRepoUrl').value) cargarDatosRemotos();
+});
+
+function extraerUsuarioYRepo(url) {
+    try {
+        let limpio = url.trim().replace(/\/+$/, "");
+        if (limpio.includes("github.com/")) {
+            const partes = limpio.split("github.com/")[1].split("/");
+            if (partes.length >= 2) return { user: partes[0], repo: partes[1] };
+        }
+        return null;
+    } catch (e) { return null; }
+}
+
+function stringToBase64UTF8(str) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(str);
+    let binString = "";
+    for (let i = 0; i < data.length; i++) {
+        binString += String.fromCharCode(data[i]);
+    }
+    return btoa(binString);
+}
+
+function base64ToStringUTF8(b64) {
+    let binString = atob(b64.replace(/\n/g, ""));
+    const data = new Uint8Array(binString.length);
+    for (let i = 0; i < binString.length; i++) {
+        data[i] = binString.charCodeAt(i);
+    }
+    const decoder = new TextDecoder();
+    return decoder.decode(data);
+}
+
+async function cargarDatosRemotos() {
+    const token = document.getElementById('ghToken').value.trim();
+    const repoUrl = document.getElementById('ghRepoUrl').value.trim();
+    const path = document.getElementById('ghPath').value.trim();
+    const grid = document.getElementById('managementGrid');
+    const datosRepo = extraerUsuarioYRepo(repoUrl);
+    if (!token || !datosRepo) return;
+
+    grid.innerHTML = '<p style="color:blue; font-size:11px; text-align:center;">⏳ Descargando base de datos desde tu GitHub...</p>';
+
+    try {
+        // Forzar no-caché con timestamp y cabecera
+        const urlGitHub = `https://api.github.com/repos/${datosRepo.user}/${datosRepo.repo}/contents/${path}?t=${Date.now()}`;
+        const res = await fetch(urlGitHub, { 
+            headers: { "Authorization": `token ${token}` },
+            cache: 'no-store'
+        });
+        
+        if (res.ok) {
+            const fileData = await res.json();
+            remoteSha = fileData.sha;
+            const jsonTextoClaro = base64ToStringUTF8(fileData.content);
+            remoteList = JSON.parse(jsonTextoClaro);
+            renderizarListaGestion();
+        } else {
+            grid.innerHTML = '<p style="color:red; font-size:11px; text-align:center;">⚠ No se encontró el archivo artworks.json en la ruta especificada.</p>';
+        }
+    } catch(e) {
+        grid.innerHTML = '<p style="color:red; font-size:11px; text-align:center;">❌ Error en enlace con los servidores remotos.</p>';
+    }
+}
+
+function renderizarListaGestion() {
+    const grid = document.getElementById('managementGrid');
+    grid.innerHTML = '';
+    
+    if(remoteList.length === 0) {
+        grid.innerHTML = '<p style="color:#707070; font-size:12px; text-align:center;">La lista está vacía.</p>';
+        return;
+    }
+
+    remoteList.forEach((art, index) => {
+        const row = document.createElement('div');
+        row.className = 'manage-row';
+        row.innerHTML = `
+            <div class="item-info">
+                <img src="${art.imageUrl}">
+                <div class="item-text">
+                    <strong>${index === 0 ? '⭐ [¡NUEVO!] ' : ''}${art.title}</strong>
+                    <span>${art.link}</span>
+                </div>
+            </div>
+            <div class="action-cluster">
+                <button class="xp-btn move-btn" onclick="moverPosicion(${index}, -1)" ${index === 0 ? 'disabled' : ''}>▲</button>
+                <button class="xp-btn move-btn" onclick="moverPosicion(${index}, 1)" ${index === remoteList.length - 1 ? 'disabled' : ''}>▼</button>
+                <button class="xp-btn danger-btn" onclick="eliminarItem(${index})">Eliminar</button>
+            </div>
+        `;
+        grid.appendChild(row);
+    });
+}
+
+function moverPosicion(index, direccion) {
+    const nuevaPosicion = index + direccion;
+    if (nuevaPosicion < 0 || nuevaPosicion >= remoteList.length) return;
+    
+    const temp = remoteList[index];
+    remoteList[index] = remoteList[nuevaPosicion];
+    remoteList[nuevaPosicion] = temp;
+    
+    renderizarListaGestion();
+    document.getElementById('btnUpload').disabled = false; 
+    document.getElementById('statusMsg').innerHTML = "<span style='color:orange;'>⚠ Has alterado el orden de la lista. Recuerda darle al botón de Subir cambios para guardarlo en GitHub.</span>";
+}
+
+document.getElementById('btnSortChronological').addEventListener('click', () => {
+    if (remoteList.length <= 1) return;
+    
+    remoteList.sort((a, b) => {
+        const idA = parseInt(a.link.match(/\/view\/(\d+)/)?.[1] || 0);
+        const idB = parseInt(b.link.match(/\/view\/(\d+)/)?.[1] || 0);
+        return idB - idA; 
+    });
+    
+    renderizarListaGestion();
+    document.getElementById('btnUpload').disabled = false;
+    document.getElementById('statusMsg').innerHTML = "<span style='color:green;'>✔️ Lista clasificada por fecha (ID de FA) correctamente. Haz clic en Subir para consolidar.</span>";
+});
+
+document.getElementById('btnPreview').addEventListener('click', () => {
+    const link = document.getElementById('faLinkInput').value.trim();
+    const sourceHTML = document.getElementById('faSourceCode').value.trim();
+    const status = document.getElementById('statusMsg');
+    const previewArea = document.getElementById('previewArea');
+    const diagnostic = document.getElementById('diagnosticBox');
+
+    if (!link || !sourceHTML) {
+        status.innerHTML = "<span style='color:red;'>❌ Rellena el enlace y el HTML fuente obligatoriamente.</span>";
+        return;
+    }
+
+    // Mostrar caja de diagnóstico
+    diagnostic.style.display = 'block';
+    let diagLog = [];
+
+    try {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(sourceHTML, 'text/html');
+        let title = doc.querySelector('meta[property="og:title"]')?.getAttribute('content') || 'Ilustración sin título';
+        title = title.split(' by ')[0]; 
+        
+        // --- EXTRACCIÓN MEJORADA DE LA IMAGEN ---
+        let imageUrl = '';
+        let foundBy = '';
+
+        // 1. Buscar #submissionImg
+        const submissionImg = doc.querySelector('#submissionImg');
+        if (submissionImg) {
+            imageUrl = submissionImg.getAttribute('data-fullview-src') || submissionImg.getAttribute('src') || '';
+            if (imageUrl) {
+                foundBy = '#submissionImg';
+                diagLog.push(`✅ Encontrado #submissionImg: ${imageUrl}`);
+            }
+        }
+
+        // 2. Buscar en .submission-image img o .submission-area img
+        if (!imageUrl) {
+            const fallbackImg = doc.querySelector('.submission-image img') || doc.querySelector('.submission-area img');
+            if (fallbackImg) {
+                imageUrl = fallbackImg.getAttribute('data-fullview-src') || fallbackImg.getAttribute('src') || '';
+                if (imageUrl) {
+                    foundBy = '.submission-image img';
+                    diagLog.push(`✅ Encontrado en .submission-image: ${imageUrl}`);
+                }
+            }
+        }
+
+        // 3. Escanear todas las imágenes y elegir la que contenga /art/
+        if (!imageUrl) {
+            const allImgs = doc.querySelectorAll('img');
+            diagLog.push(`🔍 Escaneando ${allImgs.length} imágenes en total...`);
+            for (let img of allImgs) {
+                let src = img.getAttribute('data-fullview-src') || img.getAttribute('src') || '';
+                if (src.includes('furaffinity.net/art/')) {
+                    imageUrl = src;
+                    foundBy = 'barrido de imágenes (contiene /art/)';
+                    diagLog.push(`✅ Encontrado en barrido: ${imageUrl}`);
+                    break;
+                }
+            }
+        }
+
+        // 4. Fallback con expresión regular sobre el HTML crudo
+        if (!imageUrl) {
+            const regex = /data-fullview-src="([^"]+)"/i;
+            const match = sourceHTML.match(regex);
+            if (match && match[1]) {
+                imageUrl = match[1];
+                foundBy = 'expresión regular (data-fullview-src)';
+                diagLog.push(`✅ Extraído por regex: ${imageUrl}`);
+            }
+        }
+
+        // 5. Último recurso: og:image (casi siempre logo)
+        if (!imageUrl) {
+            imageUrl = doc.querySelector('meta[property="og:image"]')?.getAttribute('content') || '';
+            if (imageUrl) {
+                foundBy = 'og:image (FALLBACK, probablemente logo)';
+                diagLog.push(`⚠️ Usando og:image como fallback: ${imageUrl}`);
+            }
+        }
+
+        // Convertir // a https://
+        if (imageUrl.startsWith('//')) {
+            imageUrl = 'https:' + imageUrl;
+        }
+
+        // Mostrar diagnóstico
+        diagnostic.innerHTML = diagLog.join('\n') + '\n\n🔗 URL final: ' + imageUrl;
+
+        // Mensaje de estado
+        status.innerHTML = `<span style="color:blue;">🔍 URL extraída: ${imageUrl}</span><br>`;
+
+        if (!imageUrl) {
+            status.innerHTML += "<span style='color:red;'>❌ No se pudo extraer ninguna URL de imagen. Verifica que el HTML contenga la imagen.</span>";
+            return;
+        }
+
+        // --- Extraer descripción ---
+        let descElement = doc.querySelector('.submission-description-text') || doc.querySelector('.submission-description');
+        let description = "";
+
+        if (descElement) {
+            let descClone = descElement.cloneNode(true);
+            
+            descClone.querySelectorAll('img').forEach(img => {
+                let src = img.getAttribute('src');
+                if (src) {
+                    if (src.startsWith('//')) {
+                        img.setAttribute('src', 'https:' + src);
+                    } else if (src.startsWith('/')) {
+                        img.setAttribute('src', 'https://www.furaffinity.net' + src);
+                    }
+                }
+                img.style.verticalAlign = 'middle';
+                img.style.marginRight = '4px';
+                img.style.height = '16px'; 
+                img.style.width = 'auto';
+            });
+
+            descClone.querySelectorAll('a.external').forEach(a => {
+                let href = a.getAttribute('href');
+                if (href && href.includes('?q=')) {
+                    let realUrl = decodeURIComponent(href.split('?q=')[1]);
+                    a.setAttribute('href', realUrl);
+                }
+                a.setAttribute('target', '_blank');
+                a.setAttribute('rel', 'noopener noreferrer');
+                a.style.color = '#0000ff';
+                a.style.textDecoration = 'underline';
+            });
+
+            descClone.querySelectorAll('a[href^="/user/"]').forEach(a => {
+                let href = a.getAttribute('href');
+                a.setAttribute('href', 'https://www.furaffinity.net' + href);
+                a.setAttribute('target', '_blank');
+                a.setAttribute('rel', 'noopener noreferrer');
+                a.style.color = '#0000ff';
+                a.style.textDecoration = 'underline';
+            });
+
+            description = descClone.innerHTML.trim();
+        } else {
+            description = 'Sin descripción.';
+        }
+
+        // Crear objeto temporal
+        tempArtObject = { title, imageUrl, description, link };
+
+        // Mostrar vista previa
+        previewArea.innerHTML = `
+            <div class="art-card">
+                <div class="art-card-img-container"><img src="${imageUrl}"></div>
+                <h3>${title}</h3>
+                <p style="font-size:10px; color:#666; word-break:break-all;">${imageUrl}</p>
+            </div>
+        `;
+        
+        // Insertar al inicio de la lista remota (evitando duplicados por URL)
+        remoteList = remoteList.filter(art => art.imageUrl !== tempArtObject.imageUrl);
+        remoteList.unshift(tempArtObject);
+        renderizarListaGestion();
+
+        status.innerHTML += "<span style='color:green;'>✔️ Previsualizado e insertado en la cola temporal. Organízalo abajo si quieres y dale a Subir.</span>";
+        document.getElementById('btnUpload').disabled = false;
+    } catch (err) {
+        console.error(err);
+        diagnostic.innerHTML = `❌ Error: ${err.message}`;
+        status.innerHTML = "<span style='color:red;'>❌ Fallo fatal analizando el HTML estructurado.</span>";
+    }
+});
+
+document.getElementById('btnUpload').addEventListener('click', async () => {
+    const token = document.getElementById('ghToken').value.trim();
+    const repoUrl = document.getElementById('ghRepoUrl').value.trim();
+    const path = document.getElementById('ghPath').value.trim();
+    const status = document.getElementById('statusMsg');
+    const datosRepo = extraerUsuarioYRepo(repoUrl);
+
+    if(!token || !datosRepo) {
+        status.innerHTML = "<span style='color:red;'>❌ Datos del repositorio inválidos.</span>";
+        return;
+    }
+
+    localStorage.setItem('gh_token', token);
+    localStorage.setItem('gh_repo_url', repoUrl);
+    localStorage.setItem('gh_path', path);
+
+    status.innerHTML = "<span style='color:blue;'>⏳ Transmitiendo cambios secuenciales a tu GitHub Pages...</span>";
+
+    try {
+        const urlGitHub = `https://api.github.com/repos/${datosRepo.user}/${datosRepo.repo}/contents/${path}`;
+        
+        const contenidoJsonString = JSON.stringify(remoteList, null, 2);
+        const contentBase64 = stringToBase64UTF8(contenidoJsonString);
+        
+        const res = await fetch(urlGitHub, {
+            method: "PUT",
+            headers: { "Authorization": `token ${token}`, "Content-Type": "application/json" },
+            body: JSON.stringify({
+                message: "Galería XP - Corrección de codificación UTF-8 para emojis",
+                content: contentBase64,
+                sha: remoteSha || undefined
+            })
+        });
+
+        if (res.ok) {
+            status.innerHTML = "<span style='color:green;'>✔️ ¡Push exitoso! Lista de posiciones consolidada en la nube con emojis intactos.</span>";
+            document.getElementById('faSourceCode').value = "";
+            document.getElementById('faLinkInput').value = "";
+            document.getElementById('btnUpload').disabled = true;
+            tempArtObject = null;
+            await cargarDatosRemotos();
+        } else {
+            const err = await res.json();
+            status.innerHTML = `<span style='color:red;'>❌ Error en transacción Git: ${err.message}</span>`;
+        }
+    } catch(e) {
+        status.innerHTML = "<span style='color:red;'>❌ Error crítico en la llamada API.</span>";
+    }
+});
+
+async function eliminarItem(index) {
+    if(!confirm(`¿Eliminar permanentemente a "${remoteList[index].title}"?`)) return;
+    remoteList.splice(index, 1);
+    renderizarListaGestion();
+    document.getElementById('btnUpload').disabled = false;
+    document.getElementById('statusMsg').innerHTML = "<span style='color:red;'>⚠ Has eliminado un ítem. Dale al botón de Subir cambios para guardar el borrado en GitHub.</span>";
+}
+
+document.getElementById('btnLoadRemote').addEventListener('click', cargarDatosRemotos);
+</script>
+</body>
+</html>
