@@ -1,0 +1,119 @@
+# TralkWK Proprietary Font License (TPL) v1.1
+
+## English
+
+Copyright © 2026 TralkRymohr. All Rights Reserved.
+
+### 1. Ownership
+
+TralkWK, including all glyphs, source files, metadata, documentation, and related assets, is the exclusive intellectual property of TralkRymohr.
+
+This font is proprietary software protected by copyright laws.
+
+### 2. License Requirement
+
+No person, organization, or company may install, use, modify, embed, distribute, or redistribute this font without a valid license or explicit written permission from the copyright holder.
+
+Receiving a copy of this font does not grant any ownership or usage rights.
+
+### 3. Free Licenses
+
+The copyright holder may, at their sole discretion, grant free licenses to selected individuals, organizations, or projects.
+
+A free license does **not** transfer ownership of the font and may include additional conditions.
+
+### 4. Attribution
+
+Unless explicitly waived in writing by the copyright holder, every authorized use of this font, including those covered by a free license, must provide visible credit.
+
+The recommended attribution is:
+
+**Font: TralkWK — Created by TralkRymohr**
+Website: https://tralk.nekoweb.org/
+
+### 5. Restrictions
+
+Without prior written permission you may NOT:
+
+* Install or use the font.
+* Modify or create derivative versions.
+* Redistribute or upload the font elsewhere.
+* Sell, sublicense, rent, or bundle the font.
+* Embed the font in software, games, applications, firmware, or websites.
+* Claim authorship of the font.
+
+### 6. Contact
+
+Website:
+https://tralk.nekoweb.org/
+
+X (Twitter):
+https://x.com/BetaTralk
+
+### 7. Acceptance
+
+By installing, copying, or using this font you agree to these terms.
+
+If you do not agree, you must immediately delete all copies.
+
+---
+
+# Licencia Propietaria de la Fuente TralkWK (TPL) v1.1
+
+## Español
+
+Copyright © 2026 TralkRymohr. Todos los derechos reservados.
+
+### 1. Propiedad
+
+TralkWK, incluidos todos sus glifos, archivos fuente, metadatos, documentación y recursos relacionados, es propiedad intelectual exclusiva de TralkRymohr.
+
+Esta fuente constituye software propietario protegido por las leyes de derechos de autor.
+
+### 2. Requisito de Licencia
+
+Ninguna persona, organización o empresa puede instalar, utilizar, modificar, incrustar, distribuir o redistribuir esta fuente sin una licencia válida o una autorización expresa por escrito del titular de los derechos.
+
+Recibir una copia de esta fuente no concede ningún derecho de uso ni de propiedad.
+
+### 3. Licencias Gratuitas
+
+El titular de los derechos podrá otorgar licencias gratuitas a personas, organizaciones o proyectos específicos según su propio criterio.
+
+Una licencia gratuita **no** transfiere la propiedad de la fuente y puede incluir condiciones adicionales.
+
+### 4. Créditos Obligatorios
+
+Salvo autorización escrita del titular de los derechos, todo uso autorizado de esta fuente, incluso cuando se haya concedido una licencia gratuita, deberá incluir créditos visibles al autor.
+
+Se recomienda utilizar el siguiente texto:
+
+**Fuente: TralkWK — Creada por TralkRymohr**
+Sitio web: https://tralk.nekoweb.org/
+
+### 5. Restricciones
+
+Sin autorización previa por escrito, NO está permitido:
+
+* Instalar o utilizar la fuente.
+* Modificarla o crear versiones derivadas.
+* Redistribuirla o volver a publicarla.
+* Venderla, sublicenciarla, alquilarla o incluirla en otros paquetes.
+* Incrustarla en software, videojuegos, aplicaciones, firmware o sitios web.
+* Atribuirse la autoría de la fuente.
+
+### 6. Contacto
+
+Sitio web:
+https://tralk.nekoweb.org/
+
+X (Twitter):
+https://x.com/BetaTralk
+
+### 7. Aceptación
+
+Al instalar, copiar o utilizar esta fuente, usted acepta todos los términos de esta licencia.
+
+Si no está de acuerdo con estas condiciones, deberá eliminar inmediatamente todas las copias de la fuente.
+
+© 2026 TralkRymohr. Todos los derechos reservados.
